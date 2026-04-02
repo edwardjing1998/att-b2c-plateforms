@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: product-offer
+  cassandra:
+    contact-points: 127.0.0.1
+    port: 9042
+    local-datacenter: datacenter1
+    keyspace-name: test_keyspace
+    schema-action: none
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 9999
+
+swagger:
+  server-url: http://localhost:9999
