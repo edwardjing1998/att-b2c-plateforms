@@ -42,7 +42,8 @@ public class CustomerController {
 
     @GetMapping("/{customerId}/offers")
     public Mono<CustomerOffersDto> getCustomerOffers(@PathVariable String customerId,
-            @RequestParam(name = "productId", required = false) UUID productId) {
+            @RequestParam(name = "productId", required = false) UUID productId,
+            @RequestParam(name = "zip", required = false) String zip) {
         Mono<CustomerDto> customerMono = customerService.getCustomerById(customerId)
                 .timeout(Duration.ofSeconds(3))
                 .onErrorMap(TimeoutException.class,
@@ -50,7 +51,9 @@ public class CustomerController {
                 .onErrorMap(WebClientResponseException.NotFound.class,
                         ex -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found", ex));
 
-        Mono<List<OfferDto>> offersMono = offerClientService.getAllOffers(productId)
+        Mono<List<OfferDto>> offersMono = customerMono
+                .map(customer -> (zip == null || zip.isBlank()) ? customer.getZip() : zip)
+                .flatMap(resolvedZip -> offerClientService.getAllOffers(productId, resolvedZip))
                 .timeout(Duration.ofSeconds(3))
                 .onErrorResume(TimeoutException.class, ex -> Mono.just(List.of()))
                 .onErrorResume(ex -> Mono.just(List.of()));

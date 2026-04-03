@@ -19,4 +19,5 @@ public class Offer {
     private UUID offerId;
     private String name;
     private UUID productId;
+    private String zip;
 }

@@ -23,7 +23,9 @@ public class OfferController {
     }
 
     @GetMapping
-    public Mono<List<OfferDto>> getAllOffers(@RequestParam(name = "productId", required = false) UUID productId) {
-        return offerClientService.getAllOffers(productId);
+    public Mono<List<OfferDto>> getAllOffers(
+            @RequestParam(name = "productId", required = false) UUID productId,
+            @RequestParam(name = "zip", required = false) String zip) {
+        return offerClientService.getAllOffers(productId, zip);
     }
 }

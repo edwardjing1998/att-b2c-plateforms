@@ -28,6 +28,13 @@ public class OfferService {
         return offerRepository.findAll();
     }
 
+    public List<Offer> findByZip(String zip) {
+        if (zip == null || zip.isBlank()) {
+            return List.of();
+        }
+        return offerRepository.findByZip(zip);
+    }
+
     public Offer findById(UUID offerId) {
         return offerRepository.findById(offerId).orElse(null);
     }
@@ -36,6 +43,12 @@ public class OfferService {
         List<OfferProduct> links = offerProductService.findByProductId(productId);
         List<UUID> offerIds = links.stream().map(link -> link.getKey().getOfferId()).distinct().collect(Collectors.toList());
         return offerIds.isEmpty() ? List.of() : offerRepository.findAllById(offerIds);
+    }
+
+    public List<Offer> findByProductIdAndZip(UUID productId, String zip) {
+        return findByProductId(productId).stream()
+                .filter(o -> zip != null && zip.equals(o.getZip()))
+                .toList();
     }
 
     public List<Product> findProductsByOfferId(UUID offerId) {

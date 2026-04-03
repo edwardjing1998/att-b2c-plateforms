@@ -21,11 +21,18 @@ public class OfferClientService {
     }
 
     public Mono<List<OfferDto>> getAllOffers(UUID productId) {
+        return getAllOffers(productId, null);
+    }
+
+    public Mono<List<OfferDto>> getAllOffers(UUID productId, String zip) {
         return webClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/api/offers");
                     if (productId != null) {
                         uriBuilder.queryParam("productId", productId);
+                    }
+                    if (zip != null && !zip.isBlank()) {
+                        uriBuilder.queryParam("zip", zip);
                     }
                     return uriBuilder.build();
                 })

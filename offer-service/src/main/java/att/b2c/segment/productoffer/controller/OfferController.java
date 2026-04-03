@@ -36,8 +36,19 @@ public class OfferController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OfferDto>> getAllOffers(@RequestParam(name = "productId", required = false) UUID productId) {
-        List<Offer> offers = productId == null ? offerService.findAll() : offerService.findByProductId(productId);
+    public ResponseEntity<List<OfferDto>> getAllOffers(
+            @RequestParam(name = "productId", required = false) UUID productId,
+            @RequestParam(name = "zip", required = false) String zip) {
+        List<Offer> offers;
+        if (productId != null && zip != null && !zip.isBlank()) {
+            offers = offerService.findByProductIdAndZip(productId, zip);
+        } else if (productId != null) {
+            offers = offerService.findByProductId(productId);
+        } else if (zip != null && !zip.isBlank()) {
+            offers = offerService.findByZip(zip);
+        } else {
+            offers = offerService.findAll();
+        }
         List<OfferDto> dtos = offers.stream().map(offer -> {
             OfferDto dto = offerMapper.toDto(offer);
             List<ProductSummaryDto> products = offerService.findProductsByOfferId(offer.getOfferId()).stream().map(productSummaryMapper::toDto)

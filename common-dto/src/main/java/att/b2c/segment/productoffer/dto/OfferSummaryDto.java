@@ -15,4 +15,5 @@ public class OfferSummaryDto {
 
     private UUID offerId;
     private String name;
+    private String zip;
 }

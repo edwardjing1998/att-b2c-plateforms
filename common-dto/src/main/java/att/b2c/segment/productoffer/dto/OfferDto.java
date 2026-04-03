@@ -16,6 +16,7 @@ public class OfferDto {
 
     private UUID offerId;
     private String name;
+    private String zip;
 
     private List<ProductSummaryDto> products;
 }
