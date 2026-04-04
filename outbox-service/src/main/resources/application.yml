@@ -1,6 +1,6 @@
 spring:
   application:
-    name: gateway-service
+    name: outbox-service
 
   cassandra:
     contact-points: 127.0.0.1
@@ -9,17 +9,19 @@ spring:
     keyspace-name: test_keyspace
     schema-action: none
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
 server:
-  port: 8888
-
-swagger:
-  server-url: http://localhost:8888
-
-product-offer:
-  api-url: http://localhost:9999
+  port: 5555
 
 available-offers:
   outbox:
+    publisher:
+      enabled: true
     topic: available-offers
     bucket-count: 16
     batch-size: 100

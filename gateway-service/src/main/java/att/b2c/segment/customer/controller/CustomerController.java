@@ -3,6 +3,7 @@ package att.b2c.segment.customer.controller;
 import att.b2c.segment.customer.service.CustomerService;
 import att.b2c.segment.customer.dto.CustomerDto;
 import att.b2c.segment.customer.dto.CustomerOffersDto;
+import att.b2c.segment.gateway.outbox.AvailableOffersOutboxService;
 import att.b2c.segment.productoffer.dto.OfferDto;
 import att.b2c.segment.productoffer.service.OfferClientService;
 
@@ -22,17 +23,24 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/api/customers")
+@Slf4j
 public class CustomerController {
 
     private final CustomerService customerService;
     private final OfferClientService offerClientService;
+    private final AvailableOffersOutboxService availableOffersOutboxService;
 
     @Autowired
-    public CustomerController(CustomerService customerService, OfferClientService offerClientService) {
+    public CustomerController(CustomerService customerService,
+            OfferClientService offerClientService,
+            AvailableOffersOutboxService availableOffersOutboxService) {
         this.customerService = customerService;
         this.offerClientService = offerClientService;
+        this.availableOffersOutboxService = availableOffersOutboxService;
     }
 
     @GetMapping("/{customerId}")
@@ -58,6 +66,10 @@ public class CustomerController {
                 .onErrorResume(TimeoutException.class, ex -> Mono.just(List.of()))
                 .onErrorResume(ex -> Mono.just(List.of()));
 
-        return Mono.zip(customerMono, offersMono, CustomerOffersDto::new);
+        return Mono.zip(customerMono, offersMono, CustomerOffersDto::new)
+                .flatMap(dto -> availableOffersOutboxService.enqueue(dto)
+                        .doOnError(ex -> log.warn("Failed to enqueue available offers outbox record", ex))
+                        .onErrorResume(ex -> Mono.empty())
+                        .thenReturn(dto));
     }
 }

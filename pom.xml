@@ -26,7 +26,9 @@
         <module>common-dto</module>
         <module>common-mapping</module>
         <module>gateway-service-utils</module>
+        <module>outbox-service-utils</module>
         <module>offer-service</module>
+        <module>outbox-service</module>
         <module>common-model</module>
         <module>offer-service-utils</module>
     </modules>
@@ -51,6 +53,11 @@
             <dependency>
                 <groupId>att-b2c-platform</groupId>
                 <artifactId>gateway-service-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>att-b2c-platform</groupId>
+                <artifactId>outbox-service-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

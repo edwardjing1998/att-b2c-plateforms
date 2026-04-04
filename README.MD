@@ -19,6 +19,26 @@ INSERT INTO offer (offerId, name, productId) VALUES (uuid(), 'Offer 3', 2f20aeb6
 INSERT INTO offer (offerId, name, productId) VALUES (uuid(), 'Offer 1', 2f20aeb6-106f-47ef-800c-3ddd02999d64);
 INSERT INTO offer (offerId, name, productId) VALUES (uuid(), 'Offer 2', 81b8949d-d10f-4edd-8a78-60d36753c3fb);
 INSERT INTO offer (offerId, name, productId) VALUES (uuid(), 'Offer 3', 81b8949d-d10f-4edd-8a78-60d36753c3fb);
+
+
+CREATE TABLE IF NOT EXISTS available_offers_outbox (
+  status text,              -- 'NEW', 'SENT', 'FAILED'
+  bucket int,               -- 0..N-1 to distribute load
+  created_at timestamp,     -- clustering for ordering
+  event_id uuid,            -- unique id
+  customer_id text,
+  payload text,             -- JSON string
+  topic text,
+  key text,                 -- kafka key, e.g. customer_id
+  attempts int,
+  last_error text,
+  sent_at timestamp,
+  PRIMARY KEY ((status, bucket), created_at, event_id)
+) WITH CLUSTERING ORDER BY (created_at ASC);
+
+
+
+
 # install redis:
 
 brew install redis
