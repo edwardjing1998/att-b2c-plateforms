@@ -1,4 +1,4 @@
-package att.b2c.segment.gateway.outbox;
+package att.b2c.segment.shared.outbox.availableoffers;
 
 import java.io.Serializable;
 import java.time.Instant;

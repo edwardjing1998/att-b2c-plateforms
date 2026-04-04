@@ -51,6 +51,11 @@
 		</dependency>
 		<dependency>
 			<groupId>att-b2c-platform</groupId>
+			<artifactId>outbox-model</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>att-b2c-platform</groupId>
 			<artifactId>outbox-service-utils</artifactId>
 			<scope>compile</scope>
 		</dependency>

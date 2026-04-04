@@ -17,7 +17,7 @@ public class CustomerService {
 
     public Mono<CustomerDto> getCustomerById(String customerId) {
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("customers/{customerId}").build(customerId))
+                .uri(uriBuilder -> uriBuilder.path("/customers/{customerId}").build(customerId))
                 .retrieve()
                 .bodyToMono(CustomerDto.class);
     }

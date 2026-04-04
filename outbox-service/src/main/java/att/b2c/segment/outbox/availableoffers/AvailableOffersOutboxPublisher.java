@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxDao;
 import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxKey;
+import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxProperties;
 import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxRecord;
 import lombok.extern.slf4j.Slf4j;
 

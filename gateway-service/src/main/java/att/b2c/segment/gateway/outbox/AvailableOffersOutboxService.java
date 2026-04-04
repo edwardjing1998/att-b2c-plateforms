@@ -10,18 +10,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import att.b2c.segment.customer.dto.AvailableOffersEventDto;
 import att.b2c.segment.customer.dto.CustomerOffersDto;
+import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxProperties;
 import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxDao;
 import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxKey;
 import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxRecord;
+import att.b2c.segment.shared.outbox.availableoffers.AvailableOffersOutboxStatus;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Service
 public class AvailableOffersOutboxService {
-
-    public static final String STATUS_NEW = "NEW";
-    public static final String STATUS_SENT = "SENT";
-    public static final String STATUS_FAILED = "FAILED";
 
     private final AvailableOffersOutboxDao dao;
     private final AvailableOffersOutboxProperties properties;
@@ -57,7 +55,7 @@ public class AvailableOffersOutboxService {
         }
 
         AvailableOffersOutboxKey key = new AvailableOffersOutboxKey(
-                STATUS_NEW,
+                AvailableOffersOutboxStatus.NEW,
                 bucket,
                 createdAt,
                 eventId);

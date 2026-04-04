@@ -11,18 +11,13 @@
     </parent>
 
     <groupId>att-b2c-platform</groupId>
-    <artifactId>outbox-service-utils</artifactId>
+    <artifactId>outbox-model</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>outbox-service-utils</name>
-    <description>outbox-service-utils</description>
+    <name>outbox-model</name>
+    <description>outbox-model</description>
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>att-b2c-platform</groupId>
-            <artifactId>outbox-model</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-cassandra</artifactId>
