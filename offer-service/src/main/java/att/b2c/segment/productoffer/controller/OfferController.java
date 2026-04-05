@@ -13,80 +13,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import att.b2c.segment.productoffer.Offer;
-import att.b2c.segment.productoffer.Product;
-import att.b2c.segment.productoffer.dto.OfferDto;
+import att.b2c.segment.productoffer.dto.OfferResponse;
 import att.b2c.segment.productoffer.dto.ProductSummaryDto;
-import att.b2c.segment.productoffer.mapping.OfferMapper;
-import att.b2c.segment.productoffer.mapping.ProductSummaryMapper;
-import att.b2c.segment.productoffer.service.OfferService;
+import att.b2c.segment.productoffer.dto.UpsertOfferRequest;
+import att.b2c.segment.productoffer.service.OfferApiService;
 
 @RestController
 @RequestMapping("/api/offers")
 public class OfferController {
 
-    private final OfferService offerService;
-    private final OfferMapper offerMapper;
-    private final ProductSummaryMapper productSummaryMapper;
+    private final OfferApiService offerApiService;
 
-    public OfferController(OfferService offerService, OfferMapper offerMapper, ProductSummaryMapper productSummaryMapper) {
-        this.offerService = offerService;
-        this.offerMapper = offerMapper;
-        this.productSummaryMapper = productSummaryMapper;
+    public OfferController(OfferApiService offerApiService) {
+        this.offerApiService = offerApiService;
     }
 
     @GetMapping
-    public ResponseEntity<List<OfferDto>> getAllOffers(
+    public ResponseEntity<List<OfferResponse>> getAllOffers(
             @RequestParam(name = "productId", required = false) UUID productId,
             @RequestParam(name = "zip", required = false) String zip) {
-        List<Offer> offers;
-        if (productId != null && zip != null && !zip.isBlank()) {
-            offers = offerService.findByProductIdAndZip(productId, zip);
-        } else if (productId != null) {
-            offers = offerService.findByProductId(productId);
-        } else if (zip != null && !zip.isBlank()) {
-            offers = offerService.findByZip(zip);
-        } else {
-            offers = offerService.findAll();
-        }
-        List<OfferDto> dtos = offers.stream().map(offer -> {
-            OfferDto dto = offerMapper.toDto(offer);
-            List<ProductSummaryDto> products = offerService.findProductsByOfferId(offer.getOfferId()).stream().map(productSummaryMapper::toDto)
-                    .toList();
-            dto.setProducts(products);
-            return dto;
-        }).toList();
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(offerApiService.getOffers(productId, zip));
     }
 
     @GetMapping("/{offerId}")
-    public ResponseEntity<OfferDto> getOffer(@PathVariable UUID offerId) {
-        Offer offer = offerService.findById(offerId);
-        if (offer == null) {
-            return ResponseEntity.notFound().build();
-        }
-        OfferDto dto = offerMapper.toDto(offer);
-        List<ProductSummaryDto> products = offerService.findProductsByOfferId(offerId).stream().map(productSummaryMapper::toDto).toList();
-        dto.setProducts(products);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<OfferResponse> getOffer(@PathVariable UUID offerId) {
+        return ResponseEntity.ok(offerApiService.getOffer(offerId));
     }
 
     @GetMapping("/{offerId}/products")
     public ResponseEntity<List<ProductSummaryDto>> getProductsByOfferId(@PathVariable UUID offerId) {
-        List<Product> products = offerService.findProductsByOfferId(offerId);
-        List<ProductSummaryDto> dtos = products.stream().map(productSummaryMapper::toDto).toList();
-        return ResponseEntity.ok(dtos);
+        return ResponseEntity.ok(offerApiService.getProductsByOfferId(offerId));
     }
 
     @PostMapping
-    public ResponseEntity<OfferDto> upsertOffer(@RequestBody OfferDto dto) {
-        Offer saved = offerService.save(offerMapper.toModel(dto));
-        return ResponseEntity.ok(offerMapper.toDto(saved));
+    public ResponseEntity<OfferResponse> upsertOffer(@RequestBody UpsertOfferRequest request) {
+        return ResponseEntity.ok(offerApiService.upsertOffer(request));
     }
 
     @DeleteMapping("/{offerId}")
     public ResponseEntity<Void> deleteOffer(@PathVariable UUID offerId) {
-        offerService.deleteById(offerId);
+        offerApiService.deleteOffer(offerId);
         return ResponseEntity.noContent().build();
     }
 }

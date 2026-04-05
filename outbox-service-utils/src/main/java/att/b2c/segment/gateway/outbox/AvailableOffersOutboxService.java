@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import att.b2c.segment.customer.dto.AvailableOffersEventDto;
 import att.b2c.segment.customer.dto.CustomerOffersDto;
@@ -24,13 +24,16 @@ public class AvailableOffersOutboxService {
     private final AvailableOffersOutboxDao dao;
     private final AvailableOffersOutboxProperties properties;
     private final ObjectMapper objectMapper;
+    private final AvailableOffersOutboxMapper mapper;
 
     public AvailableOffersOutboxService(AvailableOffersOutboxDao dao,
             AvailableOffersOutboxProperties properties,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            AvailableOffersOutboxMapper mapper) {
         this.dao = dao;
         this.properties = properties;
         this.objectMapper = objectMapper;
+        this.mapper = mapper;
     }
 
     public Mono<Void> enqueue(CustomerOffersDto dto) {
@@ -45,30 +48,27 @@ public class AvailableOffersOutboxService {
         UUID eventId = UUID.randomUUID();
         Instant createdAt = Instant.now();
 
-        AvailableOffersEventDto eventDto = new AvailableOffersEventDto(eventId, createdAt, dto);
+        AvailableOffersEventDto eventDto = mapper.toEventDto(eventId, createdAt, dto);
 
         String payload;
         try {
             payload = objectMapper.writeValueAsString(eventDto);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             return Mono.error(e);
         }
 
-        AvailableOffersOutboxKey key = new AvailableOffersOutboxKey(
+        AvailableOffersOutboxKey key = mapper.toKey(
                 AvailableOffersOutboxStatus.NEW,
                 bucket,
                 createdAt,
                 eventId);
 
-        AvailableOffersOutboxRecord record = new AvailableOffersOutboxRecord(
+        AvailableOffersOutboxRecord record = mapper.toNewRecord(
                 key,
                 customerId,
                 payload,
                 properties.getTopic(),
-                customerId,
-                0,
-                null,
-                null);
+                customerId);
 
         return Mono.fromRunnable(() -> dao.insert(record)).subscribeOn(Schedulers.boundedElastic()).then();
     }

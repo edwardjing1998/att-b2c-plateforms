@@ -2,7 +2,7 @@ package att.b2c.segment.customer.dto;
 
 import java.util.List;
 
-import att.b2c.segment.productoffer.dto.OfferDto;
+import att.b2c.segment.productoffer.dto.OfferResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class CustomerOffersDto {
 
     private CustomerDto customer;
-    private List<OfferDto> offers;
+    private List<OfferResponse> offers;
 }

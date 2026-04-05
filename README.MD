@@ -79,3 +79,66 @@ bin/kafka-topics.sh --create --topic place-order --bootstrap-server localhost:90
 
 ## run kafka consumer:
 bin/kafka-console-consumer --bootstrap-server localhost:9092 --topic place-order --from-beginning
+
+
+
+
+Phase 1 — Fix the N+1 query in OfferApiService.getOffers(...) (highest ROI)
+Identify current N+1 call site
+It’s in OfferApiService.getOffers(...) where each offer calls findProductsByOfferId(...).
+Add a batch method in the domain layer
+In offer-service-utils, add something like:
+List<OfferProduct> findByOfferIds(Set<UUID> offerIds) in OfferProductRepository (or service)
+Then translate links → productIds → products in one pass
+Add a domain/service method that returns grouped results
+e.g. Map<UUID, List<Product>> findProductsByOfferIds(Set<UUID> offerIds)
+Update OfferApiService.getOffers(...)
+Fetch offers once
+Batch fetch products for all offerIds
+Attach products per offer DTO via the grouped map
+Verify
+Run mvn -pl offer-service test (or root mvn test)
+Manually call GET /api/offers and ensure response unchanged
+
+
+Phase 2 — Standardize “not found” handling (removes null checks)
+Pick an approach
+Option A (simple): return Optional<OfferDto> / Optional<ProductDto> from ApiService
+Option B (cleaner HTTP): throw NotFoundException and handle via @ControllerAdvice
+Implement chosen approach
+If Option B:
+Create NotFoundException
+Create GlobalExceptionHandler with @ExceptionHandler(NotFoundException.class) returning 404
+Simplify controllers
+Remove if (dto == null) blocks
+Verify
+Ensure missing IDs still result in 404
+
+
+Phase 3 — Split request/response DTOs (prevents “ignored fields”)
+Introduce request DTOs
+UpsertOfferRequest (fields needed to save)
+UpsertProductRequest
+Introduce response DTOs
+OfferResponse (includes products)
+ProductResponse (includes offers if you plan that)
+Update controllers
+@RequestBody UpsertOfferRequest instead of OfferDto
+Update ApiServices and mappers
+Add MapStruct mappers for request/response or map manually
+Verify
+Existing clients may break—if you need backward compatibility, version endpoints (/v2/...) or keep old DTOs temporarily
+
+
+Phase 4 — Clarify module boundaries (optional “architecture cleanup”)
+Decide whether offer-service-utils is the right home
+If yes: consider renaming module later (purely organizational)
+If no: split into:
+offer-domain (repositories/entities/services)
+offer-application (ApiService + mapping)
+offer-service (Spring Boot app)
+Enforce dependency direction
+offer-service → offer-application → offer-domain
+Domain should not depend on web DTOs unless you intentionally allow that
+Verify
+mvn clean install at root

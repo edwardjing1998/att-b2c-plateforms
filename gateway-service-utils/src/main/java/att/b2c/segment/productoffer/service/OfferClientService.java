@@ -8,7 +8,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import att.b2c.segment.productoffer.dto.OfferDto;
+import att.b2c.segment.productoffer.dto.OfferResponse;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -20,11 +20,11 @@ public class OfferClientService {
         this.webClient = WebClient.builder().baseUrl(productOfferApiUrl).build();
     }
 
-    public Mono<List<OfferDto>> getAllOffers(UUID productId) {
+    public Mono<List<OfferResponse>> getAllOffers(UUID productId) {
         return getAllOffers(productId, null);
     }
 
-    public Mono<List<OfferDto>> getAllOffers(UUID productId, String zip) {
+    public Mono<List<OfferResponse>> getAllOffers(UUID productId, String zip) {
         return webClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/api/offers");
@@ -37,7 +37,7 @@ public class OfferClientService {
                     return uriBuilder.build();
                 })
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<OfferDto>>() {
+                .bodyToMono(new ParameterizedTypeReference<List<OfferResponse>>() {
                 });
     }
 }

@@ -20,6 +20,10 @@
 			<artifactId>common-dto</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>att-b2c-platform</groupId>
+			<artifactId>common-mapping</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
@@ -50,6 +54,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>att-b2c-platform</groupId>
 			<artifactId>outbox-model</artifactId>
 			<scope>compile</scope>
@@ -76,6 +84,10 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

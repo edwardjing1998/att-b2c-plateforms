@@ -21,6 +21,13 @@ public class OfferProductService {
         return offerProductRepository.findByKeyOfferId(offerId);
     }
 
+    public List<OfferProduct> findByOfferIds(List<UUID> offerIds) {
+        if (offerIds == null || offerIds.isEmpty()) {
+            return List.of();
+        }
+        return offerProductRepository.findByKeyOfferIdIn(offerIds);
+    }
+
     public List<OfferProduct> findByProductId(UUID productId) {
         return offerProductRepository.findByKeyProductId(productId);
     }

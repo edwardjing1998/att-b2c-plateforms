@@ -14,5 +14,7 @@ public interface OfferProductRepository extends CassandraRepository<OfferProduct
 
     List<OfferProduct> findByKeyOfferId(UUID offerId);
 
+    List<OfferProduct> findByKeyOfferIdIn(List<UUID> offerIds);
+
     List<OfferProduct> findByKeyProductId(UUID productId);
 }

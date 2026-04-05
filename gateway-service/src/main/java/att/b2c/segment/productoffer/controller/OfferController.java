@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import att.b2c.segment.productoffer.dto.OfferDto;
+import att.b2c.segment.productoffer.dto.OfferResponse;
 import att.b2c.segment.productoffer.service.OfferClientService;
 import reactor.core.publisher.Mono;
 
@@ -23,7 +23,7 @@ public class OfferController {
     }
 
     @GetMapping
-    public Mono<List<OfferDto>> getAllOffers(
+    public Mono<List<OfferResponse>> getAllOffers(
             @RequestParam(name = "productId", required = false) UUID productId,
             @RequestParam(name = "zip", required = false) String zip) {
         return offerClientService.getAllOffers(productId, zip);

@@ -4,7 +4,7 @@ import att.b2c.segment.customer.service.CustomerService;
 import att.b2c.segment.customer.dto.CustomerDto;
 import att.b2c.segment.customer.dto.CustomerOffersDto;
 import att.b2c.segment.gateway.outbox.AvailableOffersOutboxService;
-import att.b2c.segment.productoffer.dto.OfferDto;
+import att.b2c.segment.productoffer.dto.OfferResponse;
 import att.b2c.segment.productoffer.service.OfferClientService;
 
 import java.time.Duration;
@@ -59,7 +59,7 @@ public class CustomerController {
                 .onErrorMap(WebClientResponseException.NotFound.class,
                         ex -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found", ex));
 
-        Mono<List<OfferDto>> offersMono = customerMono
+        Mono<List<OfferResponse>> offersMono = customerMono
                 .map(customer -> (zip == null || zip.isBlank()) ? customer.getZip() : zip)
                 .flatMap(resolvedZip -> offerClientService.getAllOffers(productId, resolvedZip))
                 .timeout(Duration.ofSeconds(3))

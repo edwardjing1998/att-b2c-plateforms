@@ -12,47 +12,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import att.b2c.segment.productoffer.Product;
-import att.b2c.segment.productoffer.dto.ProductDto;
-import att.b2c.segment.productoffer.mapping.ProductMapper;
-import att.b2c.segment.productoffer.service.ProductService;
+import att.b2c.segment.productoffer.dto.ProductResponse;
+import att.b2c.segment.productoffer.dto.UpsertProductRequest;
+import att.b2c.segment.productoffer.service.ProductApiService;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
-    private final ProductMapper productMapper;
+    private final ProductApiService productApiService;
 
-    public ProductController(ProductService productService, ProductMapper productMapper) {
-        this.productService = productService;
-        this.productMapper = productMapper;
+    public ProductController(ProductApiService productApiService) {
+        this.productApiService = productApiService;
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<ProductDto> dtos = productService.findAll().stream().map(productMapper::toDto).toList();
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        return ResponseEntity.ok(productApiService.getProducts());
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable UUID productId) {
-        Product product = productService.findById(productId);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(productMapper.toDto(product));
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable UUID productId) {
+        return ResponseEntity.ok(productApiService.getProduct(productId));
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> upsertProduct(@RequestBody ProductDto dto) {
-        Product saved = productService.save(productMapper.toModel(dto));
-        return ResponseEntity.ok(productMapper.toDto(saved));
+    public ResponseEntity<ProductResponse> upsertProduct(@RequestBody UpsertProductRequest request) {
+        return ResponseEntity.ok(productApiService.upsertProduct(request));
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID productId) {
-        productService.deleteById(productId);
+        productApiService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
 }

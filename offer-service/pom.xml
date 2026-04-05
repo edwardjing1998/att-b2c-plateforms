@@ -62,18 +62,7 @@
 
         <dependency>
             <groupId>att-b2c-platform</groupId>
-            <artifactId>common-model</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>att-b2c-platform</groupId>
             <artifactId>common-dto</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>att-b2c-platform</groupId>
-            <artifactId>common-mapping</artifactId>
         </dependency>
 
         <dependency>
@@ -84,6 +73,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

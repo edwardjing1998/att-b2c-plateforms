@@ -47,6 +47,16 @@
             <artifactId>common-model</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>att-b2c-platform</groupId>
+            <artifactId>common-dto</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>att-b2c-platform</groupId>
+            <artifactId>common-mapping</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
