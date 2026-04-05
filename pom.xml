@@ -29,9 +29,10 @@
         <module>outbox-model</module>
         <module>outbox-service-utils</module>
         <module>offer-service</module>
+        <module>offer-application</module>
+        <module>offer-domain</module>
         <module>outbox-service</module>
         <module>common-model</module>
-        <module>offer-service-utils</module>
     </modules>
 
     <dependencyManagement>
@@ -68,9 +69,15 @@
             </dependency>
             <dependency>
                 <groupId>att-b2c-platform</groupId>
-                <artifactId>offer-service-utils</artifactId>
+                <artifactId>offer-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>att-b2c-platform</groupId>
+                <artifactId>offer-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>att-b2c-platform</groupId>
                 <artifactId>offer-service</artifactId>

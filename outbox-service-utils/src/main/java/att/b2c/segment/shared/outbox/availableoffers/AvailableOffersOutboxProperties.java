@@ -14,7 +14,7 @@ public class AvailableOffersOutboxProperties {
     private int bucketCount = 16;
     private int batchSize = 100;
     private int maxAttempts = 5;
-    private long pollDelayMs = 1000;
+    private long pollDelayMs = 12000;
 
     @Data
     public static class Publisher {

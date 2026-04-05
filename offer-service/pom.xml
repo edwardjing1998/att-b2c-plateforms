@@ -67,7 +67,7 @@
 
         <dependency>
             <groupId>att-b2c-platform</groupId>
-            <artifactId>offer-service-utils</artifactId>
+            <artifactId>offer-application</artifactId>
         </dependency>
 
         <dependency>

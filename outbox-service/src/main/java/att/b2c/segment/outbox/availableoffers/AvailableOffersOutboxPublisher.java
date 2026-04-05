@@ -35,7 +35,7 @@ public class AvailableOffersOutboxPublisher {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Scheduled(fixedDelayString = "${available-offers.outbox.poll-delay-ms:1000}")
+    @Scheduled(initialDelayString = "#{@availableOffersOutboxProperties.pollDelayMs}",fixedDelayString = "#{@availableOffersOutboxProperties.pollDelayMs}")
     public void publishNew() {
         for (int bucket = 0; bucket < properties.getBucketCount(); bucket++) {
             List<AvailableOffersOutboxRecord> batch = dao.fetch(STATUS_NEW, bucket, properties.getBatchSize());
@@ -45,7 +45,21 @@ public class AvailableOffersOutboxPublisher {
 
             for (AvailableOffersOutboxRecord record : batch) {
                 try {
+                    log.info("Outbox publish start status={} bucket={} eventId={} customerId={} topic={}",
+                            record.getKey().getStatus(),
+                            record.getKey().getBucket(),
+                            record.getKey().getEventId(),
+                            record.getCustomerId(),
+                            record.getTopic());
+
                     kafkaTemplate.send(record.getTopic(), record.getKeyValue(), record.getPayload()).get();
+
+                    log.info("Outbox publish success status={} bucket={} eventId={} customerId={} topic={}",
+                            record.getKey().getStatus(),
+                            record.getKey().getBucket(),
+                            record.getKey().getEventId(),
+                            record.getCustomerId(),
+                            record.getTopic());
 
                     AvailableOffersOutboxKey sentKey = new AvailableOffersOutboxKey(
                             STATUS_SENT,
@@ -65,6 +79,13 @@ public class AvailableOffersOutboxPublisher {
 
                     dao.insert(sentRecord);
                     dao.delete(record.getKey());
+
+                    log.info("Outbox state transition complete fromStatus={} toStatus={} bucket={} eventId={} customerId={}",
+                            record.getKey().getStatus(),
+                            sentKey.getStatus(),
+                            record.getKey().getBucket(),
+                            record.getKey().getEventId(),
+                            record.getCustomerId());
                 } catch (Exception ex) {
                     handleFailure(record, ex);
                 }

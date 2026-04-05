@@ -20,8 +20,4 @@ product-offer:
 
 available-offers:
   outbox:
-    topic: available-offers
-    bucket-count: 16
-    batch-size: 100
-    max-attempts: 5
-    poll-delay-ms: 1000
+
